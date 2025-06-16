@@ -1,57 +1,59 @@
-# Starter Template Project
+# Swapify - Face Swapping Application
 
 ## Overview
-This project is a Python-based application structured with modular components, including API endpoints, configuration management, and utility scripts. It is containerized using Docker for easy deployment and scalability.
+
+Swapify is a face swapping application that uses deep learning models to swap faces between images. It provides a FastAPI backend for face swapping and a Streamlit UI for easy interaction.
 
 ## Project Structure
-- `docker/`: Contains Docker-related files including `Dockerfile` and `docker-compose.yml` for containerization.
-- `src/`: Main source code directory.
-  - `main.py`: Application entry point.
-  - `schemas.py`: Data schemas used in the application.
-  - `api/`: API implementation and endpoints.
-  - `config/`: Configuration files.
-- `scripts/`: Utility and automation scripts.
-- `tests/`: Test cases for the application.
-- `utils/`: Utility modules to support the application.
 
-## Prerequisites
-- Python 3.8 or higher
-- Docker (for containerization)
-- pip (Python package installer)
+- `src/services/swapper.py`: Core face swapping logic using InsightFace models.
+- `src/api/endpoints/face_swap.py`: FastAPI endpoint to handle face swap requests.
+- `src/streamlit/streamlit_ui.py`: Streamlit UI for uploading images and displaying results.
+- `model_artifacts/`: Directory to store swapper model files.
+- `src/main.py`: Entry point to run the FastAPI server.
 
-## Installation
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd starter-template
-   ```
+## Setup
 
-2. (Optional) Create and activate a virtual environment:
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate 
-   ```
+1. Clone the repository.
+
+2. Place your model inside the `model_artifacts/` directory at the root of the project.
+
+3. Install required Python packages:
+
+```bash
+pip install -r requirements.txt
+# or manually install
+pip install fastapi uvicorn python-multipart insightface streamlit opencv-python pillow requests
+```
 
 ## Running the Application
 
-### Using Docker
-Build and run the Docker container:
-```bash
-docker-compose up --build
-```
-The application will be accessible at the configured API endpoint.
+### Start the FastAPI Server
 
-### Without Docker
-Run the application directly:
+Run the FastAPI backend server:
+
 ```bash
-python src/main.py
+uvicorn src.main:app --reload
 ```
 
-## Testing
-Run tests using your preferred test runner, for example:
+The API will be available at `http://127.0.0.1:8000`.
+
+### Start the Streamlit UI
+
+In a separate terminal, run the Streamlit UI:
+
 ```bash
-pytest tests/
+streamlit run src/streamlit/streamlit_ui.py
 ```
 
-## Contributing
-Contributions are welcome! Please open issues or submit pull requests for improvements or bug fixes.
+This will open a web interface where you can upload a source image and a destination image, swap faces, and save the result.
+
+## API Endpoint
+
+- `POST /swap-face/`: Accepts two image files (`source_face_file` and `dest_face_file`) and returns the face-swapped image.
+
+## Notes
+
+- Ensure the `python-multipart` package is installed to handle file uploads in FastAPI.
+- The face swapping model is loaded from the `model_artifacts` directory for reliable path management.
+- The Streamlit UI interacts with the FastAPI backend to perform face swapping.
