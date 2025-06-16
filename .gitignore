@@ -17,6 +17,7 @@ model_artifacts/
 *.ipynb
 *.parquet
 *.Identifier
+.DS_Store
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
