@@ -11,7 +11,7 @@ assets/
 *.json
 notebooks/
 data_regulations/
-
+model_artifacts/
 !release-please-config.json
 !.release-please-manifest.json
 *.ipynb
