@@ -2,7 +2,7 @@ import platform
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import logging
-from api.api import api_router
+from app.api.api import api_router
 
 
 # Set up logging

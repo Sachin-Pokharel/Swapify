@@ -35,19 +35,17 @@ def main():
                         swapped_image = Image.open(BytesIO(response.content))
                         st.image(swapped_image, caption="Swapped Image", use_container_width=True)
 
-                        col1 = st.columns(1)
-                        with col1:
-                            # Save swapped image button - allows user to download the image
-                            buf = BytesIO()
-                            swapped_image.save(buf, format="JPEG")
-                            byte_im = buf.getvalue()
+                        # Save swapped image button - allows user to download the image
+                        buf = BytesIO()
+                        swapped_image.save(buf, format="JPEG")
+                        byte_im = buf.getvalue()
 
-                            st.download_button(
-                                label="Save Swapped Image",
-                                data=byte_im,
-                                file_name="swapped_result.jpg",
-                                mime="image/jpeg",
-                            )
+                        st.download_button(
+                            label="Save Swapped Image",
+                            data=byte_im,
+                            file_name="swapped_result.jpg",
+                            mime="image/jpeg",
+                        )
 
                     else:
                         st.error(f"Error swapping faces: {response.status_code} - {response.text}")

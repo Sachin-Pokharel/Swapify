@@ -1,14 +1,14 @@
 import insightface
 from insightface.app import FaceAnalysis
 import concurrent.futures
-import os
+from app.core.config import settings
 
 class FaceSwapper:
     def __init__(self):
         self.analyzer_model_name = 'buffalo_l'
         self.analyzer = FaceAnalysis(name=self.analyzer_model_name)
         self.analyzer.prepare(ctx_id=0, det_size=(640, 640))
-        self.swapper_model_path = os.path.join(os.path.dirname(__file__), '../../model_artifacts/inswapper_128.onnx')
+        self.swapper_model_path = settings.model_artifact_path
         self.swapper = insightface.model_zoo.get_model(self.swapper_model_path, download=False, providers=["CoreMLExecutionProvider"])
 
     def get_face_embedding(self, source_img):

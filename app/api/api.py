@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from api.endpoints import health, face_swap
+from app.api.endpoints import health, face_swap
 
 
 api_router = APIRouter()

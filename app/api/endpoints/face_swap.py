@@ -3,13 +3,13 @@ from fastapi.responses import StreamingResponse
 import io
 import numpy as np
 import cv2
-from services.swapper import FaceSwapper
+from app.services.swapper import FaceSwapper
 
 router = APIRouter()
 face_swapper = FaceSwapper()
 
 
-async def read_image_from_upload_file(file: UploadFile, img_path: str):
+async def read_image_from_upload_file(file: UploadFile):
     try:
         file.file.seek(0)
         contents = await file.read()
@@ -22,12 +22,6 @@ async def read_image_from_upload_file(file: UploadFile, img_path: str):
 
         if image is None:
             raise ValueError("cv2.imdecode failed to decode image")
-
-        saved = cv2.imwrite(img_path, image)
-        if not saved:
-            print(f"Failed to save image to {img_path}")
-        else:
-            print(f"Image saved to {img_path}")
 
         return image
 
@@ -43,9 +37,9 @@ async def swap_face(
     dest_face_file: UploadFile = File(...),
 ):
     try:
-        # ✅ Always await the async read function
-        source_image = await read_image_from_upload_file(source_face_file, "source.jpg")
-        target_image = await read_image_from_upload_file(dest_face_file, "dest.jpg")
+        # Always await the async read function
+        source_image = await read_image_from_upload_file(source_face_file)
+        target_image = await read_image_from_upload_file(dest_face_file)
 
         if source_image is None or target_image is None:
             return {"error": "Failed to read one or both images."}
