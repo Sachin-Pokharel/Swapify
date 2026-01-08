@@ -19,7 +19,7 @@ ENV PATH="/root/.local/bin:$PATH"
 # ✅ Add PYTHONPATH to find app.api
 ENV PYTHONPATH="/app"
 # Set model artifact path
-ENV model_artifact_path="/app/model_artifacts/inswapper_128.onnx"
+ENV model_artifact_path="/app/model_artifacts/face_model_lightweight.onnx"
 
 # Install Python dependencies using uv
 COPY pyproject.toml uv.lock* ./

@@ -21,7 +21,7 @@ services:
       - /app/app/streamlit/__pycache__
       - /app/app/gradio/__pycache__
     environment:
-      - model_artifact_path=/app/model_artifacts/inswapper_128.onnx
+      - model_artifact_path=/app/model_artifacts/face_model_lightweight.onnx
       - CAMERA_INDEX=0
     devices:
       # Mount camera devices (adjust if your camera is on a different device)
