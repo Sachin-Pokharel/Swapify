@@ -16,12 +16,10 @@ if platform.system() == "Windows":
     pathlib.PosixPath = pathlib.WindowsPath
 
 
-app = FastAPI(root_path="/api/v1")
+app = FastAPI()
 
-
-
-# Register routes from the blueprint
-app.include_router(api_router)
+# Register routes from the blueprint with /api/v1 prefix
+app.include_router(api_router, prefix="/api/v1")
 
 # Middleware for CORS
 app.add_middleware(

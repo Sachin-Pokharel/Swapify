@@ -18,15 +18,17 @@ ENV PATH="/root/.local/bin:$PATH"
 
 # ✅ Add PYTHONPATH to find app.api
 ENV PYTHONPATH="/app"
+# Set model artifact path
+ENV model_artifact_path="/app/model_artifacts/inswapper_128.onnx"
 
 # Install Python dependencies using uv
-COPY pyproject.toml .
-RUN uv pip install --system -r pyproject.toml
+COPY pyproject.toml uv.lock* ./
+RUN uv pip install --system .
 
-# Copy source code
+# Copy source code and model artifacts
 COPY . .
 
-# Expose FastAPI and Streamlit ports
+# Expose FastAPI and Streamlit ports (internal container ports)
 EXPOSE 8000 8501
 
 # Start both services

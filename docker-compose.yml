@@ -4,7 +4,28 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"   # FastAPI
-      - "8501:8501"   # Streamlit
+      - "6374:8000"   # FastAPI (host:container)
+      - "6375:8501"   # Streamlit (host:container)
+    volumes:
+      # Mount source code for hot reload
+      - ./app:/app/app
+      - ./model_artifacts:/app/model_artifacts
+      # Exclude __pycache__ and other build artifacts
+      - /app/__pycache__
+      - /app/app/__pycache__
+      - /app/app/api/__pycache__
+      - /app/app/api/endpoints/__pycache__
+      - /app/app/core/__pycache__
+      - /app/app/services/__pycache__
+      - /app/app/streamlit/__pycache__
+    environment:
+      - model_artifact_path=/app/model_artifacts/inswapper_128.onnx
+      - CAMERA_INDEX=0
+    devices:
+      # Mount camera devices (adjust if your camera is on a different device)
+      - /dev/video0:/dev/video0
+      # Alternative: mount all video devices
+      # - /dev/video:/dev/video
+    privileged: true  # Required for camera access in some environments
     container_name: fastapi_streamlit
     restart: unless-stopped
