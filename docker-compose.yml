@@ -6,6 +6,7 @@ services:
     ports:
       - "6374:8000"   # FastAPI (host:container)
       - "6375:8501"   # Streamlit (host:container)
+      - "6376:7860"   # Gradio (host:container)
     volumes:
       # Mount source code for hot reload
       - ./app:/app/app
@@ -18,14 +19,19 @@ services:
       - /app/app/core/__pycache__
       - /app/app/services/__pycache__
       - /app/app/streamlit/__pycache__
+      - /app/app/gradio/__pycache__
     environment:
       - model_artifact_path=/app/model_artifacts/inswapper_128.onnx
       - CAMERA_INDEX=0
     devices:
       # Mount camera devices (adjust if your camera is on a different device)
       - /dev/video0:/dev/video0
-      # Alternative: mount all video devices
+      # Alternative: mount all video devices (uncomment if needed)
       # - /dev/video:/dev/video
     privileged: true  # Required for camera access in some environments
-    container_name: fastapi_streamlit
+    # For Windows Docker Desktop, also try:
+    # - Add to WSL2 settings if using WSL2 backend
+    # - Enable "Use the WSL 2 based engine" in Docker Desktop settings
+    # - Or use Windows containers instead of Linux containers
+    container_name: swapify_app
     restart: unless-stopped

@@ -2,14 +2,53 @@ import insightface
 from insightface.app import FaceAnalysis
 import concurrent.futures
 from app.core.config import settings
+import logging
+
+logger = logging.getLogger(__name__)
 
 class FaceSwapper:
-    def __init__(self):
-        self.analyzer_model_name = 'buffalo_l'
-        self.analyzer = FaceAnalysis(name=self.analyzer_model_name)
-        self.analyzer.prepare(ctx_id=0, det_size=(640, 640))
-        self.swapper_model_path = settings.model_artifact_path
-        self.swapper = insightface.model_zoo.get_model(self.swapper_model_path, download=False, providers=["CoreMLExecutionProvider"])
+    def __init__(self, analyzer=None, swapper=None):
+        """
+        Initialize FaceSwapper with pre-loaded models.
+        If models are not provided, they will be loaded (for backward compatibility).
+        
+        :param analyzer: Pre-loaded FaceAnalysis analyzer model
+        :param swapper: Pre-loaded face swapper model
+        """
+        if analyzer is not None and swapper is not None:
+            # Use pre-loaded models
+            self.analyzer = analyzer
+            self.swapper = swapper
+            logger.info("FaceSwapper initialized with pre-loaded models")
+        else:
+            # Load models (for backward compatibility)
+            logger.warning("Loading models in __init__ - consider using lifespan for better performance")
+            self.analyzer_model_name = 'buffalo_l'
+            self.analyzer = FaceAnalysis(name=self.analyzer_model_name)
+            self.analyzer.prepare(ctx_id=0, det_size=(640, 640))
+            self.swapper_model_path = settings.model_artifact_path
+            self.swapper = insightface.model_zoo.get_model(self.swapper_model_path, download=False, providers=["CoreMLExecutionProvider"])
+    
+    @staticmethod
+    def load_models():
+        """
+        Load and return the face analysis and swapper models.
+        This should be called during application startup.
+        
+        :return: Tuple of (analyzer, swapper) models
+        """
+        logger.info("Loading face analysis model (buffalo_l)...")
+        analyzer_model_name = 'buffalo_l'
+        analyzer = FaceAnalysis(name=analyzer_model_name)
+        analyzer.prepare(ctx_id=0, det_size=(640, 640))
+        logger.info("Face analysis model loaded successfully")
+        
+        logger.info(f"Loading face swapper model from {settings.model_artifact_path}...")
+        swapper_model_path = settings.model_artifact_path
+        swapper = insightface.model_zoo.get_model(swapper_model_path, download=False, providers=["CoreMLExecutionProvider"])
+        logger.info("Face swapper model loaded successfully")
+        
+        return analyzer, swapper
 
     def get_face_embedding(self, source_img):
         """

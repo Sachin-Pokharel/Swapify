@@ -8,7 +8,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Container name
-CONTAINER_NAME="fastapi_streamlit"
+CONTAINER_NAME="swapify_app"
 COMPOSE_FILE="docker-compose.yml"
 
 # Function to print colored messages

@@ -1,9 +1,10 @@
 import platform
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import logging
 from app.api.api import api_router
-
+from app.services.swapper import FaceSwapper
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -16,7 +17,33 @@ if platform.system() == "Windows":
     pathlib.PosixPath = pathlib.WindowsPath
 
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """
+    Lifespan context manager for FastAPI.
+    Loads models during startup and cleans up on shutdown.
+    """
+    # Startup: Load models
+    logger.info("Starting up: Loading face swap models...")
+    try:
+        analyzer, swapper = FaceSwapper.load_models()
+        # Store models in app.state for access by endpoints
+        app.state.face_analyzer = analyzer
+        app.state.face_swapper = swapper
+        app.state.face_swapper_instance = FaceSwapper(analyzer=analyzer, swapper=swapper)
+        logger.info("Models loaded successfully and stored in app.state")
+    except Exception as e:
+        logger.error(f"Failed to load models during startup: {str(e)}")
+        raise
+    
+    yield
+    
+    # Shutdown: Cleanup (if needed)
+    logger.info("Shutting down: Cleaning up resources...")
+    # Models will be cleaned up automatically by Python's garbage collector
+
+
+app = FastAPI(lifespan=lifespan)
 
 # Register routes from the blueprint with /api/v1 prefix
 app.include_router(api_router, prefix="/api/v1")

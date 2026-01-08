@@ -28,8 +28,8 @@ RUN uv pip install --system .
 # Copy source code and model artifacts
 COPY . .
 
-# Expose FastAPI and Streamlit ports (internal container ports)
-EXPOSE 8000 8501
+# Expose FastAPI, Streamlit, and Gradio ports (internal container ports)
+EXPOSE 8000 8501 7860
 
 # Start both services
 CMD ["supervisord", "-c", "/app/supervisord.conf"]
